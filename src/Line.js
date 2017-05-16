@@ -18,7 +18,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import React,{Component} from 'react'
 import {Text as ReactText}  from 'react-native'
-import Svg,{ G, Path, Rect, Text } from 'react-native-svg'
+import Svg,{ G, Path, Rect, Text, Circle } from 'react-native-svg'
 import { Colors, Options, cyclic, fontAdapt } from './util'
 import Axis from './Axis'
 import _ from 'lodash'
@@ -93,10 +93,58 @@ export default class LineChart extends Component {
 
     let showAreas = typeof(this.props.options.showAreas) !== 'undefined' ? this.props.options.showAreas : true;
     let strokeWidth = typeof(this.props.options.strokeWidth) !== 'undefined' ? this.props.options.strokeWidth : '1';
+
     let lines = _.map(chart.curves, function (c, i) {
       return <Path key={'lines' + i} d={ c.line.path.print() } stroke={ this.color(i) } strokeWidth={strokeWidth} fill="none"/>
     }.bind(this))
     let areas = null
+
+    const ptsOptions = this.props.options.showPoints
+    let pts
+    if(ptsOptions){
+      const stroke = ptsOptions.strokeColor ?  ptsOptions.strokeColor : 'black'
+      const fill = ptsOptions.fillColor ?  ptsOptions.fillColor : 'white'
+      const r = ptsOptions.pointRadius ? ptsOptions.pointRadius: '2'
+      if(ptsOptions.showAll === undefined || ptsOptions.showAll){
+        pts = _.map(chart.curves, function (c, i) {
+          return c.line.path.points().map(([x, y], j) => {
+            return(
+              <G key={j} x={x} y={y}>
+                  <Circle r={r} cx="0" cy="0" stroke={stroke} fill={fill} />
+              </G>
+            )
+          })
+        }.bind(this))
+      } else {
+        pts = _.map(chart.curves, function (c, i) {
+          return c.line.path.points().map(([x, y], j) => {
+            let found = []
+            ptsOptions.points.map(({index, label}) => {
+              if(index == j){
+                found.push(label)
+              }
+            })
+            if(found[0]){
+              labelStyle = fontAdapt(ptsOptions.label)
+              return (
+                <G key={j} x={x} y={y}>
+                  <Circle r={r} cx="0" cy="0" stroke={stroke} fill={fill} />
+                  <Text x='0' y='5'
+                        fontFamily={labelStyle.fontFamily}
+                        fontSize={labelStyle.fontSize}
+                        fontWeight={labelStyle.fontWeight}
+                        fontStyle={labelStyle.fontStyle}
+                        fill={labelStyle.fill}
+                        >
+                    {found[0]}
+                  </Text>
+                </G>
+              )
+            }
+          })
+        }.bind(this))
+      }
+    }
 
     if(showAreas){
       areas = _.map(chart.curves, function (c, i) {
@@ -164,6 +212,7 @@ export default class LineChart extends Component {
                         { regions }
                         { areas }
                         { lines }
+                        { pts }
                       <Axis key="x" scale={chart.xscale} options={options.axisX} chartArea={chartArea} />
                       <Axis key="y" scale={chart.yscale} options={options.axisY} chartArea={chartArea} />
                   </G>
