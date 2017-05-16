@@ -124,6 +124,7 @@ export default class LineChart extends Component {
                 found.push(label)
               }
             })
+
             if(found[0]){
               labelStyle = fontAdapt(ptsOptions.label)
               return (
@@ -135,6 +136,7 @@ export default class LineChart extends Component {
                         fontWeight={labelStyle.fontWeight}
                         fontStyle={labelStyle.fontStyle}
                         fill={labelStyle.fill}
+                        textAnchor={x >= this.props.options.width/2.0 ? 'end' : 'start'}
                         >
                     {found[0]}
                   </Text>
