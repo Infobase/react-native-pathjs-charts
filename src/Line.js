@@ -124,18 +124,22 @@ export default class LineChart extends Component {
                 found.push(label)
               }
             })
-            if(found[0]){
+            if(found.length > 0){
               labelStyle = fontAdapt(ptsOptions.label)
               return (
                 <G key={j} x={x} y={y}>
                   <Circle r={r} cx="0" cy="0" stroke={stroke} fill={fill} />
-                  <Text x='0' y='5'
+                  <Rect key={'region' + i} x={x >= this.props.options.width/2.0 ? '-50' : '0'} y='-15' width='200' height='12'
+                        fill='white' fillOpacity='1'/>
+
+                  <Text x='0' y='-15'
                         fontFamily={labelStyle.fontFamily}
                         fontSize={labelStyle.fontSize}
                         fontWeight={labelStyle.fontWeight}
                         fontStyle={labelStyle.fontStyle}
                         fill={labelStyle.fill}
-                        >
+                        textAnchor={x >= this.props.options.width/2.0 ? 'end' : 'start'}
+                  >
                     {found[0]}
                   </Text>
                 </G>
