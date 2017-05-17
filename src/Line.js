@@ -226,9 +226,9 @@ export default class LineChart extends Component {
                         { regions }
                         { areas }
                         { lines }
-                        { pts }
                       <Axis key="x" scale={chart.xscale} options={options.axisX} chartArea={chartArea} />
                       <Axis key="y" scale={chart.yscale} options={options.axisY} chartArea={chartArea} />
+                        { pts }
                   </G>
               </Svg>
 
