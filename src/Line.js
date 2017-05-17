@@ -126,6 +126,16 @@ export default class LineChart extends Component {
             })
             if(found.length > 0){
               labelStyle = fontAdapt(ptsOptions.label)
+              if(ptsOptions.label.isSvg){
+                let svgLabelFunc = found[0]
+                let result = svgLabelFunc(x)            // Calling a function that plot your custom svg
+                return (
+                  <G key={j} x={x} y={y}>
+                    <Circle r={r} cx="0" cy="0" stroke={stroke} fill={fill} />
+                    {result}
+                  </G>
+                )
+              }
               return (
                 <G key={j} x={x} y={y}>
                   <Circle r={r} cx="0" cy="0" stroke={stroke} fill={fill} />
